@@ -2,11 +2,15 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
-use std::vec::*;
+//use std::vec::*;
+
+
+
+
 
 #[derive(Debug)]
 struct Node<T> {
@@ -29,13 +33,16 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T:Clone+ std::cmp::PartialOrd> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+
+
+
+impl<T:Clone+ std::cmp::PartialOrd> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -69,15 +76,48 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+
+	pub fn merge(mut list_a: LinkedList<T>,mut list_b: LinkedList<T>) -> Self {  
+        let mut merge_list=Self::new();
+        let n = list_a.length as i32+list_b.length as i32;
+        let mut a_index=0;
+        let mut b_index=0;
+        for _ in 0..n{
+            let  a_node=list_a.get(a_index);
+            let  b_node=list_b.get(b_index);
+           // let  a = *(a_node.unwrap());
+           // let  b =*(b_node.unwrap());
+            if a_node==None{
+                if(b_node==None){
+                    return merge_list
+                }
+                merge_list.add((b_node.unwrap()).clone());
+                b_index+=1;
+            }
+            else{
+                if b_node==None{
+                    if(a_node==None){
+                        return merge_list
+                    }
+                    merge_list.add((a_node.unwrap()).clone());
+                    a_index+=1;
+                }
+                else{
+                    if *(a_node.unwrap())<=*(b_node.unwrap()){
+                        merge_list.add((a_node.unwrap()).clone());
+                        a_index+=1;
+                    }
+                    else{
+                        merge_list.add((b_node.unwrap()).clone());
+                        b_index+=1;
+                    }
+                }
+            }
         }
-	}
+        
+        merge_list
+    }  
+
 }
 
 impl<T> Display for LinkedList<T>

@@ -3,17 +3,17 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
+
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
 
-#[derive(Debug)]
+#[derive(Debug,PartialEq)]
 struct TreeNode<T>
 where
     T: Ord,
 {
-    value: T,
+    value:  T,
     left: Option<Box<TreeNode<T>>>,
     right: Option<Box<TreeNode<T>>>,
 }
@@ -49,14 +49,20 @@ where
     }
 
     // Insert a value into the BST
-    fn insert(&mut self, value: T) {
-        //TODO
+    pub fn insert(&mut self, value: T) {
+        match self.root{
+            Some(ref mut node)=>(*node).insert(value),
+            None=>self.root=Some(Box::new(TreeNode::new(value))),
+        }
+       
     }
 
-    // Search for a value in the BST
-    fn search(&self, value: T) -> bool {
-        //TODO
-        true
+
+    pub fn search(&self, value: T) -> bool {
+        match self.root{
+            Some(ref  node)=>(*node).search(value),
+            None=>false,
+        }
     }
 }
 
@@ -67,8 +73,56 @@ where
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+        match value.cmp(&self.value) {  
+            Ordering::Less => {  
+                if self.left.is_none() {  
+                    self.left = Some(Box::new(TreeNode::new(value)));  
+                } else {  
+                    self.left.as_mut().unwrap().insert(value);  
+                }  
+            }  
+            Ordering::Greater => {  
+                if self.right.is_none() {  
+                    self.right = Some(Box::new(TreeNode::new(value)));  
+                } else {  
+                    self.right.as_mut().unwrap().insert(value);  
+                }  
+            }  
+            Ordering::Equal => {}  
+        }  
+    
     }
-}
+
+    fn search(& self, value: T) -> bool {  
+        
+           let  key =&self.value;
+                match key.cmp(&value) {
+                    Ordering::Equal => {
+                        // key == value
+                        true
+                    }
+                    Ordering::Greater => {
+                        // key > value
+                        match &self.left {
+                            Some(node) => node.search(value),
+                            None => false,
+                        }
+                    }
+                    Ordering::Less => {
+                        // key < value
+                        match &self.right {
+                            Some(node) => node.search(value),
+                            None => false,
+                        }
+                    }
+                
+                }
+            
+        
+    }  
+
+}  
+
 
 
 #[cfg(test)]
