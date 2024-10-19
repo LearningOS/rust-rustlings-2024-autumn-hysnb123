@@ -2,7 +2,7 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
+
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -52,13 +52,14 @@ impl<T> Default for Queue<T> {
     }
 }
 
-pub struct myStack<T>
+pub struct MyStack<T>
 {
 	//TODO
 	q1:Queue<T>,
 	q2:Queue<T>
 }
-impl<T> myStack<T> {
+
+impl<T> MyStack<T> {
     pub fn new() -> Self {
         Self {
 			//TODO
@@ -66,16 +67,36 @@ impl<T> myStack<T> {
 			q2:Queue::<T>::new()
         }
     }
+
     pub fn push(&mut self, elem: T) {
-        //TODO
+        self.q1.enqueue(elem);
     }
     pub fn pop(&mut self) -> Result<T, &str> {
         //TODO
-		Err("Stack is empty")
+        if self.is_empty(){
+            Err("Stack is empty")
+        }
+        else{
+            let mut size = &self.q1.size()+&self.q2.size();
+            size-=1;
+            for _ in 0..size{
+                let mut a=self.q1.dequeue().unwrap();
+                self.q2.enqueue(a);
+                let mut b=self.q2.dequeue().unwrap();
+                self.q1.enqueue(b);
+            }
+            let c = self.q1.dequeue();
+            c
+        }
+		
     }
     pub fn is_empty(&self) -> bool {
 		//TODO
-        true
+        if self.q1.is_empty(){
+            true
+        }else{
+            false
+        }
     }
 }
 
@@ -85,7 +106,7 @@ mod tests {
 	
 	#[test]
 	fn test_queue(){
-		let mut s = myStack::<i32>::new();
+		let mut s = MyStack::<i32>::new();
 		assert_eq!(s.pop(), Err("Stack is empty"));
         s.push(1);
         s.push(2);
